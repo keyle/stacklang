@@ -4,7 +4,7 @@ hello .
 2 6 * .
 */
 
-const str = "helloworld .";
+const str = "hello_world .";
 var i = 0;
 var n = str.length;
 var d = [];
@@ -45,11 +45,13 @@ while (i < n) {
         continue;
     }
 
+
+
     i++;
 }
 
 n = d.length;
-i = n;
+i = n - 1;
 
 var cmd = { token: null, args: [], argc: 0 };
 
@@ -61,7 +63,7 @@ var dic = {
     '/': { argc: 2, execute: cmd => Number(cmd.args[0]) / Number(cmd.args[1]) },
 }
 
-while (d.length > 0 || i >= 0) {
+while (d.length > 0 && i >= 0) {
     const tok = d[i];
 
     if (dic[tok]) {
@@ -69,6 +71,8 @@ while (d.length > 0 || i >= 0) {
         cmd.argc = dic[tok].argc;
         cmd.args = [];
     } else {
+        if (!cmd.token)
+            throw new Error("oops, no token? " + cmd.token);
         cmd.args.push(tok);
         if (cmd.args.length == cmd.argc) {
             let result = dic[cmd.token].execute(cmd);
@@ -77,7 +81,7 @@ while (d.length > 0 || i >= 0) {
             } else {
                 d.splice(i, cmd.argc + 1);
             }
-            // cmd.token = null;
+            cmd.token = null;
             i = d.length - 1;
             continue;
         }
@@ -86,4 +90,6 @@ while (d.length > 0 || i >= 0) {
     i--;
 }
 
-process.exit();
+if(cmd.token) {
+    throw new Error("oops, program ended prematurely.");
+}
